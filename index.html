@@ -156,6 +156,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-seri
 .cmi-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;color:#fff;font-weight:700;font-size:12px;padding:3px 10px;min-width:46px}
 .day-close-btn{width:100%;margin-top:20px;padding:10px;border-radius:8px;border:1px solid #e0e0f0;background:#f7f7fc;cursor:pointer;font-size:13px;font-weight:700;color:var(--pv);font-family:inherit}
 .day-close-btn:hover{background:#eeeeff}
+/* SETTINGS TOGGLES */
+.tgl-row{display:flex;align-items:center;justify-content:space-between;padding:10px 2px;border-bottom:1px solid #f7f7fc}
+.tgl-row:last-child{border-bottom:none}
+.tgl-lbl{font-size:12px;color:#333}
+.tgl{width:38px;height:22px;border-radius:20px;background:#e0e0f0;position:relative;cursor:pointer;transition:background .15s;flex-shrink:0}
+.tgl.on{background:var(--pv)}
+.tgl-knob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tgl.on .tgl-knob{left:18px}
+.contact-row{display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid #ebebf5;border-radius:9px;text-decoration:none;color:#222;margin-bottom:10px;transition:border-color .12s}
+.contact-row:hover{border-color:#aaaaee;background:#f9f9ff}
+.contact-row i{font-size:19px;color:var(--pv)}
+.contact-lbl{font-size:9px;color:#bbb;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.contact-val{font-size:14px;font-weight:700;color:#222}
+.settings-sec-lbl{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 /* IPA DETAIL MODAL */
 .ipa-ov{display:none;position:absolute;inset:0;background:rgba(30,30,80,.18);z-index:500;align-items:center;justify-content:center}
 .ipa-ov.open{display:flex}
@@ -229,7 +243,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-seri
       <div class="sb-item" id="nb-ins" onclick="go('ins')"><i class="ti ti-chart-bar"></i> Insights <span style="background:var(--pv);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;letter-spacing:.04em">BETA</span></div>
       <div class="sb-item" id="nb-comp" onclick="go('comp')"><i class="ti ti-shield-check"></i> Compliance</div>
       <div style="flex:1"></div>
-      <div class="sb-settings"><i class="ti ti-settings"></i> Settings</div>
+      <div class="sb-settings" onclick="openSettingsOv()"><i class="ti ti-settings"></i> Settings</div>
     </div>
 
     <div class="main">
@@ -237,7 +251,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-seri
       <!-- HOME -->
       <div id="p-home" class="home-wrap">
         <div style="display:flex;justify-content:flex-end;width:100%;margin-bottom:10px">
-          <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--pv);cursor:pointer"><i class="ti ti-settings" style="font-size:14px"></i> Settings</span>
+          <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--pv);cursor:pointer" onclick="openSettingsOv()"><i class="ti ti-settings" style="font-size:14px"></i> Settings</span>
         </div>
         <div class="home-title">CMI Max</div>
         <div class="home-logo-row">
@@ -253,7 +267,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-seri
         <div class="home-cta">
           <div class="home-cta-t">Need more solutions?</div>
           <div class="home-cta-s">Don't hesitate to get in touch with us!</div>
-          <button class="cta-btn">Contact us</button>
+          <button class="cta-btn" onclick="openContactOv()">Contact us</button>
         </div>
       </div>
 
@@ -439,6 +453,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-seri
           <tbody id="dayBody"></tbody>
         </table>
         <button class="day-close-btn" onclick="closeDayOv()">Close</button>
+      </div>
+    </div>
+
+    <!-- CONTACT US MODAL -->
+    <div class="day-ov" id="contactOv">
+      <div class="day-modal" style="max-width:380px">
+        <div class="day-modal-title" style="font-size:24px">Contact us</div>
+        <div class="day-modal-sub">We'd love to help you get set up.</div>
+        <a class="contact-row" href="tel:+12145098904">
+          <i class="ti ti-phone"></i>
+          <div><div class="contact-lbl">Phone</div><div class="contact-val">+1 (214) 509-8904</div></div>
+        </a>
+        <a class="contact-row" href="mailto:sales@patientvoice.ai">
+          <i class="ti ti-mail"></i>
+          <div><div class="contact-lbl">Email</div><div class="contact-val">sales@patientvoice.ai</div></div>
+        </a>
+        <button class="day-close-btn" onclick="closeContactOv()">Close</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="day-ov" id="settingsOv">
+      <div class="day-modal" style="max-width:440px;text-align:left">
+        <div class="day-modal-title" style="font-size:24px">Settings</div>
+        <div class="day-modal-sub">Account &amp; notification preferences</div>
+
+        <div class="settings-sec-lbl">Account</div>
+        <div style="display:flex;align-items:center;gap:11px;padding:11px 13px;background:#f7f7fc;border-radius:9px;margin-bottom:16px">
+          <div class="t-av" style="width:34px;height:34px;font-size:14px">T</div>
+          <div><div style="font-size:13px;font-weight:700;color:#222">Tyler Foust</div><div style="font-size:11px;color:#aaa">tyler.foust@patientvoiceai.com</div></div>
+        </div>
+
+        <div class="settings-sec-lbl">Notifications</div>
+        <div id="settingsToggles" style="margin-bottom:16px"></div>
+
+        <div class="settings-sec-lbl">Facility</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:#f7f7fc;border-radius:9px;margin-bottom:4px">
+          <div style="font-size:13px;color:#333;font-weight:600">Sunrise Skilled Nursing</div>
+          <span class="pill p-ok">Active</span>
+        </div>
+
+        <button class="day-close-btn" onclick="closeSettingsOv()">Close</button>
       </div>
     </div>
 
@@ -638,6 +694,25 @@ function openDayModal(d,r){
   document.getElementById('dayOv').classList.add('open');
 }
 function closeDayOv(){document.getElementById('dayOv').classList.remove('open');}
+
+// ===== CONTACT US MODAL =====
+function openContactOv(){document.getElementById('contactOv').classList.add('open');}
+function closeContactOv(){document.getElementById('contactOv').classList.remove('open');}
+
+// ===== SETTINGS MODAL =====
+var SETTINGS_TOGGLES=[
+  {label:'Critical IPA alerts',on:true},
+  {label:'ARD deadline reminders (48hr)',on:true},
+  {label:'Weekly CMI digest email',on:false}
+];
+function renderSettingsToggles(){
+  document.getElementById('settingsToggles').innerHTML=SETTINGS_TOGGLES.map(function(t,i){
+    return '<div class="tgl-row"><span class="tgl-lbl">'+t.label+'</span><div class="tgl '+(t.on?'on':'')+'" onclick="toggleSetting('+i+')"><div class="tgl-knob"></div></div></div>';
+  }).join('');
+}
+function toggleSetting(i){SETTINGS_TOGGLES[i].on=!SETTINGS_TOGGLES[i].on;renderSettingsToggles();}
+function openSettingsOv(){renderSettingsToggles();document.getElementById('settingsOv').classList.add('open');}
+function closeSettingsOv(){document.getElementById('settingsOv').classList.remove('open');}
 
 // ===== IPA LIST =====
 function renderIPA(){
