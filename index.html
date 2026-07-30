@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CMI Max — Interactive Sales Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-serif;background:#f0f0f8;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+:root{--pv:#3333cc;--pv-l:#e8e8f8;--pv-hover:#f5f5ff}
+.role-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;background:#fff;border:1px solid #ddddf0;border-radius:10px;padding:8px 14px;flex-wrap:wrap}
+.role-bar-lbl{font-size:11px;color:#888;font-weight:600;margin-right:4px}
+.r-tab{padding:5px 14px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:12px;color:#777;font-family:inherit;transition:all .15s;white-space:nowrap}
+.r-tab.on{background:var(--pv);color:#fff;font-weight:700}
+.app{width:100%;max-width:1100px;border:1px solid #d8d8ee;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 28px rgba(51,51,204,.10);display:flex;flex-direction:column;min-height:680px}
+.topbar{background:#fff;border-bottom:1px solid #e8e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:50px;flex-shrink:0}
+.pv-logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.pv-wordmark span{font-size:13px;letter-spacing:.12em;color:#333}
+.pv-wordmark .bold{font-weight:700}
+.pv-wordmark .sup{font-size:8px;vertical-align:super;color:#aaa;font-weight:400}
+.topright{display:flex;align-items:center;gap:10px}
+.t-email{font-size:12px;color:#888}
+.t-av{width:30px;height:30px;border-radius:50%;background:var(--pv);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.body{display:flex;flex:1;overflow:hidden}
+.sidebar{width:230px;background:#fff;border-right:1px solid #ebebf5;flex-shrink:0;padding:20px 0 16px;display:flex;flex-direction:column}
+.sb-nav-lbl{font-size:10px;font-weight:700;color:#aaa;letter-spacing:.1em;padding:0 20px;margin-bottom:12px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;color:#555;cursor:pointer;transition:background .12s;border-left:3px solid transparent}
+.sb-item:hover{background:var(--pv-hover);color:var(--pv)}
+.sb-item.on{background:var(--pv-hover);color:var(--pv);font-weight:600;border-left-color:var(--pv)}
+.sb-item i{font-size:17px;color:inherit;flex-shrink:0}
+.sb-settings{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;color:var(--pv);cursor:pointer;margin-top:auto}
+.main{flex:1;overflow-y:auto;background:#f7f7fc;position:relative}
+.home-wrap{padding:20px 40px 30px;display:flex;flex-direction:column;align-items:center}
+.home-title{font-size:38px;font-weight:300;color:#333;text-align:center;margin-bottom:6px}
+.home-logo-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.home-logo-text{font-size:13px;letter-spacing:.12em;color:var(--pv)}
+.home-logo-text .bold{font-weight:700}
+.home-logo-text .sup{font-size:8px;vertical-align:super;font-weight:400}
+.home-sub{font-size:12px;color:#bbb;margin-bottom:28px}
+.home-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;max-width:780px;margin-bottom:20px}
+.h-tile{background:#fff;border:1px solid #ebebf5;border-radius:10px;padding:34px 20px 26px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:all .15s;position:relative;min-height:180px;justify-content:center}
+.h-tile:hover{border-color:#aaaaee;box-shadow:0 2px 16px rgba(51,51,204,.08)}
+.h-tile-ico{font-size:40px;color:var(--pv);margin-bottom:14px}
+.h-tile-lbl{font-size:15px;font-weight:600;color:#333;margin-bottom:6px;text-align:center}
+.h-tile-sub{font-size:12px;color:#aaa;text-align:center;line-height:1.4}
+.beta-corner{position:absolute;top:12px;right:12px;background:var(--pv);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:.04em}
+.home-cta{background:#fff;border:1px solid #ebebf5;border-radius:10px;padding:22px 32px;width:100%;max-width:780px;text-align:center}
+.home-cta-t{font-size:15px;font-weight:700;color:#333;margin-bottom:5px}
+.home-cta-s{font-size:12px;color:#aaa;margin-bottom:14px}
+.cta-btn{background:var(--pv);color:#fff;border:none;padding:9px 30px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.cta-btn:hover{background:#2222aa}
+.page-wrap{padding:22px 24px}
+.sec-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.sec-t{font-size:17px;font-weight:700;color:#222}
+.sec-s{font-size:12px;color:#aaa;margin-top:2px}
+.search-bar{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e0e0f0;border-radius:8px;padding:7px 12px;margin-bottom:14px}
+.search-bar i{color:#aaa;font-size:16px}
+.search-bar input{border:none;outline:none;font-family:inherit;font-size:12px;color:#333;flex:1;background:transparent}
+.search-bar input::placeholder{color:#bbb}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.met{background:#fff;border:1px solid #ebebf5;border-radius:8px;padding:13px 15px}
+.met-lbl{font-size:10px;color:#bbb;margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.met-val{font-size:22px;font-weight:700;color:#222;line-height:1}
+.met-d{font-size:10px;margin-top:4px;font-weight:500}
+.up{color:#0a7a4c}.warn{color:#9a6200}.dn{color:#c0392b}
+.card{background:#fff;border:1px solid #ebebf5;border-radius:10px;padding:16px;margin-bottom:14px}
+.card-t{font-size:13px;font-weight:700;color:#333;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.p-d{background:#fdecea;color:#c0392b}.p-w{background:#fff4e0;color:#9a6200}.p-ok{background:#e6f7ef;color:#0a7a4c}.p-b{background:#eaeaff;color:var(--pv)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:7px 10px;color:#bbb;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #f0f0f8}
+.tbl td{padding:9px 10px;border-bottom:1px solid #f7f7fc;color:#333;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.rr:hover td{background:#f0f0ff;cursor:pointer}
+.av{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.res-name-wrap{position:relative;display:inline-block}
+.res-link{color:#3333cc;font-weight:700;cursor:pointer;border-bottom:1px dashed #aaaaee;white-space:nowrap}
+.res-link:hover{border-bottom-color:var(--pv)}
+.mrn-sub{font-size:10px;color:#bbb;font-family:monospace;display:block;margin-top:1px}
+/* HOVER CARD */
+.htip{display:none;position:absolute;left:0;top:calc(100% + 4px);background:#fff;border:1px solid #d0d0f0;border-radius:10px;padding:12px 14px;width:290px;z-index:900;box-shadow:0 6px 20px rgba(51,51,204,.13);pointer-events:none}
+.htip.show{display:block}
+.htip-name{font-size:13px;font-weight:700;color:#222;margin-bottom:8px}
+.htip-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.htip-met{background:#f7f7fc;border-radius:6px;padding:7px 10px}
+.htip-lbl{font-size:9px;color:#bbb;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.htip-val{font-size:14px;font-weight:700;color:#222}
+.htip-find{font-size:11px;color:#444;line-height:1.45;padding:7px 10px;border-radius:6px;border-left:2px solid #EF9F27;background:#fff4e0}
+.htip-find.high{background:#fdecea;border-color:#c0392b}
+.htip-find.ok{background:#e6f7ef;border-color:#1D9E75}
+.htip-hint{font-size:10px;color:#aaa;margin-top:7px;text-align:center}
+/* IPA */
+.ipa{background:#fff;border:1px solid #ebebf5;border-radius:10px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:13px;cursor:pointer;transition:border-color .12s}
+.ipa:hover{border-color:#aaaaee}
+.ipa-ico{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ipa-ico.h{background:#fdecea}.ipa-ico.m{background:#fff4e0}.ipa-ico.l{background:#eaeaff}
+.ipa-body{flex:1}
+.ipa-t{font-size:13px;font-weight:700;color:#222;margin-bottom:3px;display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.ipa-s{font-size:11px;color:#888;line-height:1.5;margin-bottom:5px}
+.ipa-r{font-size:11px;font-weight:700;color:#0a7a4c}
+.sev{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700}
+.s-h{background:#fdecea;color:#c0392b}.s-m{background:#fff4e0;color:#9a6200}.s-l{background:#eaeaff;color:var(--pv)}
+.aud-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid #f7f7fc}
+.aud-row:last-child{border-bottom:none}
+.aud-ck{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px}
+.ck-ok{background:#e6f7ef;color:#0a7a4c}.ck-fl{background:#fdecea;color:#c0392b}.ck-wn{background:#fff4e0;color:#9a6200}
+.aud-txt{font-size:12px;color:#333;flex:1;line-height:1.4}
+.aud-dt{font-size:10px;color:#bbb;white-space:nowrap}
+.prog-r{margin-bottom:12px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;color:#555;font-weight:600}
+.prog-bar{height:6px;background:#f0f0f8;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px}
+.pf-green{background:#1D9E75}.pf-amber{background:#EF9F27}
+.ch-wrap{position:relative;width:100%;height:175px}
+.org-card{background:#fff;border:1px solid #ebebf5;border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .12s}
+.org-card:hover{border-color:#aaaaee}
+.org-icon{width:40px;height:40px;border-radius:9px;background:var(--pv-l);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.org-icon i{font-size:20px;color:var(--pv)}
+/* PDPM PAGE */
+.pdpm-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid #ebebf5;background:#fff}
+.pdpm-title{font-size:22px;font-weight:400;color:#222}
+.pdpm-action-btns{display:flex;gap:8px}
+.pdpm-action-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid #d8d8f0;border-radius:6px;font-size:12px;color:#555;cursor:pointer;background:#fff;font-family:inherit}
+.pdpm-action-btn:hover{border-color:var(--pv);color:var(--pv)}
+.beta-tag{font-size:8px;background:var(--pv);color:#fff;padding:1px 4px;border-radius:3px;font-weight:700}
+.pdpm-body{padding:20px 24px}
+.pdpm-card{background:#fff;border:1px solid #ebebf5;border-radius:10px;padding:20px 24px;margin-bottom:16px}
+.pdpm-card-title{font-size:20px;font-weight:600;color:#222;margin-bottom:4px}
+.pdpm-card-sub{font-size:12px;color:#aaa;margin-bottom:14px}
+.pdpm-nav{display:flex;gap:8px;justify-content:flex-end;margin-bottom:14px}
+.pdpm-nav-btn{padding:6px 18px;border:1px solid #d8d8f0;border-radius:6px;background:#f7f7fc;cursor:pointer;font-size:15px;font-weight:600;color:#555;font-family:inherit}
+.pdpm-nav-btn:hover{background:#eaeaff;border-color:var(--pv);color:var(--pv)}
+.pdpm-chart-area{position:relative;width:100%;height:280px}
+.pdpm-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:#555}
+.pdpm-legend-item{display:flex;align-items:center;gap:5px}
+.pdpm-legend-dot{width:10px;height:10px;border-radius:2px}
+.pdpm-baseline-lbl{margin-top:10px;font-size:10px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.pdpm-baseline-row{display:flex;justify-content:space-around;font-size:11px;color:#888;margin-top:5px;padding:0 2px}
+.pdpm-baseline-row span{text-align:center;flex:1}
+.ard-badge{display:inline-flex;align-items:center;justify-content:center;background:#3333cc;color:#fff;font-size:9px;font-weight:800;border-radius:20px;padding:2px 8px}
+.res-footer-area{padding:14px 24px 8px;border-top:1px solid #ebebf5}
+.res-footer-lbl{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.res-footer-val{font-size:14px;font-weight:700;color:#222}
+/* DAY BREAKDOWN MODAL */
+.day-ov{display:none;position:fixed;inset:0;background:rgba(30,30,80,.22);z-index:700;align-items:center;justify-content:center}
+.day-ov.open{display:flex}
+.day-modal{background:#fff;border-radius:14px;padding:28px;width:90%;max-width:490px;box-shadow:0 8px 40px rgba(51,51,204,.15)}
+.day-modal-title{font-size:28px;font-weight:300;color:#222;margin-bottom:5px}
+.day-modal-sub{font-size:13px;color:#888;margin-bottom:18px;font-weight:500}
+.day-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.day-tbl th{text-align:left;padding:8px 10px;color:#888;font-weight:700;font-size:11px;border-bottom:2px solid #f0f0f0}
+.day-tbl td{padding:9px 10px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+.day-tbl tr:last-child td{border-bottom:none}
+.cmi-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;color:#fff;font-weight:700;font-size:12px;padding:3px 10px;min-width:46px}
+.day-close-btn{width:100%;margin-top:20px;padding:10px;border-radius:8px;border:1px solid #e0e0f0;background:#f7f7fc;cursor:pointer;font-size:13px;font-weight:700;color:var(--pv);font-family:inherit}
+.day-close-btn:hover{background:#eeeeff}
+/* IPA DETAIL MODAL */
+.ipa-ov{display:none;position:absolute;inset:0;background:rgba(30,30,80,.18);z-index:500;align-items:center;justify-content:center}
+.ipa-ov.open{display:flex}
+.ipa-modal{background:#fff;border-radius:14px;padding:22px;width:90%;max-width:480px;border:1px solid #e0e0f0;box-shadow:0 8px 32px rgba(51,51,204,.12)}
+/* AI */
+.ai-wrap{position:absolute;bottom:18px;right:18px;z-index:300;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.ai-panel{width:330px;background:#fff;border:1px solid #c8c8ee;border-radius:14px;display:none;flex-direction:column;max-height:460px;box-shadow:0 6px 24px rgba(51,51,204,.12)}
+.ai-panel.open{display:flex}
+.ai-ph{padding:11px 15px;border-bottom:1px solid #f0f0f8;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ai-ph-t{font-size:12px;font-weight:700;color:var(--pv);display:flex;align-items:center;gap:7px}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:#1D9E75;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ai-mode-lbl{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px}
+.ai-mode-lbl.demo{background:#fff4e0;color:#9a6200}
+.ai-mode-lbl.live{background:#e6f7ef;color:#0a7a4c}
+.ai-close{background:none;border:none;cursor:pointer;font-size:18px;color:#ccc;font-family:inherit;line-height:1}
+.ai-mode-toggle{display:flex;border-bottom:1px solid #f0f0f8;flex-shrink:0}
+.ai-mode-btn{flex:1;padding:7px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;font-family:inherit;color:#aaa;border-bottom:2px solid transparent;transition:all .15s}
+.ai-mode-btn.on{color:var(--pv);border-bottom-color:var(--pv)}
+.ai-msgs{flex:1;overflow-y:auto;padding:11px 13px;display:flex;flex-direction:column;gap:8px;min-height:80px}
+.ai-m{font-size:12px;line-height:1.55;padding:8px 11px;border-radius:9px;max-width:93%}
+.ai-m.bot{background:#f2f2fa;color:#333;align-self:flex-start}
+.ai-m.user{background:var(--pv);color:#fff;align-self:flex-end}
+.ai-chips{display:flex;flex-wrap:wrap;gap:4px;padding:6px 13px;flex-shrink:0;border-top:1px solid #f5f5fb}
+.ai-chip{font-size:10px;padding:4px 9px;border-radius:20px;border:1px solid #d8d8f0;color:var(--pv);background:#fff;cursor:pointer;font-family:inherit;white-space:nowrap}
+.ai-chip:hover{background:#eeeeff}
+.ai-inp-row{display:flex;gap:6px;padding:9px 13px;border-top:1px solid #f0f0f8;flex-shrink:0}
+.ai-inp{flex:1;font-size:11px;padding:6px 10px;border-radius:7px;border:1px solid #d8d8f0;color:#333;font-family:inherit;background:#f8f8ff;outline:none}
+.ai-inp:focus{border-color:var(--pv)}
+.ai-send{padding:6px 12px;border-radius:7px;border:none;background:var(--pv);cursor:pointer;font-size:11px;color:#fff;font-family:inherit;font-weight:700}
+.ai-send:hover{background:#2222aa}
+.ai-fab{background:var(--pv);color:#fff;border:none;border-radius:24px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(51,51,204,.28)}
+.ai-fab:hover{background:#2222aa}
+</style>
+</head>
+<body>
+
+<div class="role-bar">
+  <span class="role-bar-lbl">Pitch mode:</span>
+  <button class="r-tab on" onclick="setRole('mds')">🗂 MDS Coordinator</button>
+  <button class="r-tab" onclick="setRole('clinical')">🩺 Clinical Team</button>
+  <button class="r-tab" onclick="setRole('admin')">📊 Administration</button>
+  <button class="r-tab" onclick="setRole('all')" style="margin-left:6px;border:1px solid #d8d8f0">All audiences</button>
+</div>
+
+<div class="app">
+  <div class="topbar">
+    <div class="pv-logo" onclick="go('home')">
+      <svg viewBox="0 0 52 44" fill="none" width="26" height="22">
+        <rect x="2" y="2" width="38" height="28" rx="6" stroke="var(--pv)" stroke-width="2.5" fill="none"/>
+        <polygon points="8,30 6,38 16,31" fill="var(--pv)"/>
+        <circle cx="14" cy="16" r="2.5" fill="var(--pv)"/>
+        <circle cx="21" cy="16" r="2.5" fill="var(--pv)"/>
+        <circle cx="28" cy="16" r="2.5" fill="var(--pv)"/>
+      </svg>
+      <div class="pv-wordmark"><span>PATIENT </span><span class="bold">VOICE</span><span> AI</span><span class="sup">™</span></div>
+    </div>
+    <div class="topright">
+      <span class="t-email">tyler.foust@patientvoiceai.com</span>
+      <div class="t-av">T</div>
+    </div>
+  </div>
+
+  <div class="body" style="position:relative">
+    <div class="sidebar">
+      <div class="sb-nav-lbl">NAVIGATION</div>
+      <div class="sb-item" id="nb-home" onclick="go('home')"><i class="ti ti-home"></i> Home</div>
+      <div class="sb-item" id="nb-orgs" onclick="go('orgs')"><i class="ti ti-building"></i> Organizations</div>
+      <div class="sb-item" id="nb-res" onclick="go('res')"><i class="ti ti-bed"></i> Residents</div>
+      <div class="sb-item" id="nb-ipa" onclick="go('ipa')"><i class="ti ti-bell"></i> IPA Recommendations</div>
+      <div class="sb-item" id="nb-ins" onclick="go('ins')"><i class="ti ti-chart-bar"></i> Insights <span style="background:var(--pv);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;letter-spacing:.04em">BETA</span></div>
+      <div class="sb-item" id="nb-comp" onclick="go('comp')"><i class="ti ti-shield-check"></i> Compliance</div>
+      <div style="flex:1"></div>
+      <div class="sb-settings"><i class="ti ti-settings"></i> Settings</div>
+    </div>
+
+    <div class="main">
+
+      <!-- HOME -->
+      <div id="p-home" class="home-wrap">
+        <div style="display:flex;justify-content:flex-end;width:100%;margin-bottom:10px">
+          <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--pv);cursor:pointer"><i class="ti ti-settings" style="font-size:14px"></i> Settings</span>
+        </div>
+        <div class="home-title">CMI Max</div>
+        <div class="home-logo-row">
+          <svg viewBox="0 0 52 44" fill="none" width="18" height="16"><rect x="2" y="2" width="38" height="28" rx="6" stroke="var(--pv)" stroke-width="2.5" fill="none"/><polygon points="8,30 6,38 16,31" fill="var(--pv)"/><circle cx="14" cy="16" r="2.5" fill="var(--pv)"/><circle cx="21" cy="16" r="2.5" fill="var(--pv)"/><circle cx="28" cy="16" r="2.5" fill="var(--pv)"/></svg>
+          <div class="home-logo-text"><span>PATIENT </span><span class="bold">VOICE</span><span> AI</span><span class="sup">™</span></div>
+        </div>
+        <div class="home-sub">Revolutionizing Case Mix Index Management</div>
+        <div class="home-tiles">
+          <div class="h-tile" onclick="go('res')"><i class="ti ti-bed h-tile-ico"></i><div class="h-tile-lbl">Cases</div><div class="h-tile-sub">Active residents being monitored</div></div>
+          <div class="h-tile" onclick="go('ins')"><div class="beta-corner">BETA</div><i class="ti ti-message-dots h-tile-ico"></i><div class="h-tile-lbl">Insights</div><div class="h-tile-sub">Consult documentation using AI</div></div>
+          <div class="h-tile" onclick="go('ipa')"><i class="ti ti-bell h-tile-ico"></i><div class="h-tile-lbl">Unread Notifications</div><div class="h-tile-sub">Notifications pending to be read</div></div>
+        </div>
+        <div class="home-cta">
+          <div class="home-cta-t">Need more solutions?</div>
+          <div class="home-cta-s">Don't hesitate to get in touch with us!</div>
+          <button class="cta-btn">Contact us</button>
+        </div>
+      </div>
+
+      <!-- ORGANIZATIONS -->
+      <div id="p-orgs" class="page-wrap" style="display:none">
+        <div class="sec-hdr"><div><div class="sec-t">Organizations</div><div class="sec-s">Facilities using CMI Max</div></div><span class="pill p-b">3 facilities</span></div>
+        <div class="org-card" onclick="go('res')"><div class="org-icon"><i class="ti ti-building-hospital"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:#222">Sunrise Skilled Nursing</div><div style="font-size:11px;color:#bbb;margin-top:2px">Dallas, TX · 112 residents</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--pv)">CMI 1.62</div><div style="margin-top:4px"><span class="pill p-ok">Active</span></div></div></div>
+        <div class="org-card" onclick="go('res')"><div class="org-icon"><i class="ti ti-building-hospital"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:#222">Lakewood Care Center</div><div style="font-size:11px;color:#bbb;margin-top:2px">Plano, TX · 88 residents</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--pv)">CMI 1.44</div><div style="margin-top:4px"><span class="pill p-ok">Active</span></div></div></div>
+        <div class="org-card" onclick="go('res')"><div class="org-icon"><i class="ti ti-building-hospital"></i></div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:#222">Meridian Post-Acute</div><div style="font-size:11px;color:#bbb;margin-top:2px">McKinney, TX · 64 residents</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--pv)">CMI 1.71</div><div style="margin-top:4px"><span class="pill p-w">Onboarding</span></div></div></div>
+      </div>
+
+      <!-- RESIDENTS -->
+      <div id="p-res" class="page-wrap" style="display:none">
+        <div class="sec-hdr"><div><div class="sec-t">Residents</div><div class="sec-s">Active cases — Sunrise Skilled Nursing</div></div><span class="pill p-b">28 residents</span></div>
+        <div class="metrics">
+          <div class="met"><div class="met-lbl">Avg CMI</div><div class="met-val">1.62</div><div class="met-d up">↑ 0.11 vs last quarter</div></div>
+          <div class="met"><div class="met-lbl">Open gaps</div><div class="met-val">14</div><div class="met-d warn">3 critical — act now</div></div>
+          <div class="met"><div class="met-lbl">Revenue at risk</div><div class="met-val" style="font-size:17px">$23,480</div><div class="met-d dn">this period</div></div>
+          <div class="met"><div class="met-lbl">PDPM accuracy</div><div class="met-val">91%</div><div class="met-d up">↑ from 76% at go-live</div></div>
+        </div>
+        <div class="search-bar">
+          <i class="ti ti-search"></i>
+          <input type="text" id="resSearch" placeholder="Search by name or Medical Record Number (MRN)…" oninput="filterRes()"/>
+        </div>
+        <div class="card">
+          <div class="card-t">Active cases <span style="font-size:11px;font-weight:400;color:#bbb">Hover name for quick stats · Click name for Daily PDPM chart</span></div>
+          <table class="tbl">
+            <thead><tr><th></th><th>Resident</th><th>MRN</th><th>Admitted</th><th>ARD closes</th><th>CMI</th><th>PDPM groups</th><th>AI status</th></tr></thead>
+            <tbody id="resTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PDPM CHART VIEW -->
+      <div id="p-pdpm" style="display:none">
+        <div class="pdpm-topbar">
+          <div style="display:flex;align-items:center;gap:12px">
+            <button onclick="go('res')" style="background:none;border:none;cursor:pointer;color:var(--pv);font-size:13px;font-family:inherit;display:flex;align-items:center;gap:4px"><i class="ti ti-arrow-left"></i> Residents</button>
+            <span style="color:#ddd">|</span>
+            <div class="pdpm-title" id="pdpmResName">Show</div>
+          </div>
+          <div class="pdpm-action-btns">
+            <button class="pdpm-action-btn"><i class="ti ti-message-dots"></i> Case Insights <span class="beta-tag">BETA</span></button>
+            <button class="pdpm-action-btn"><i class="ti ti-flag"></i> Admission Screen</button>
+          </div>
+        </div>
+        <div class="pdpm-body">
+          <div class="pdpm-card">
+            <div class="pdpm-card-title">Daily PDPM Components</div>
+            <div class="pdpm-card-sub">Stacked totals for the last 7 days, with VPD adjustments, Nursing AIDS add-on, and non-case mix.</div>
+            <div class="pdpm-nav" style="justify-content:space-between;align-items:center">
+              <button class="pdpm-nav-btn" id="pdpmPrevBtn" onclick="shiftWeek(-1)">&lt;</button>
+              <span id="pdpmWeekLbl" style="font-size:11px;color:#888;font-weight:600"></span>
+              <button class="pdpm-nav-btn" id="pdpmNextBtn" onclick="shiftWeek(1)">&gt;</button>
+            </div>
+            <div class="pdpm-chart-area"><canvas id="pdpmChart"></canvas></div>
+            <div class="pdpm-legend">
+              <div class="pdpm-legend-item"><div class="pdpm-legend-dot" style="background:#1D9E75"></div>Nursing</div>
+              <div class="pdpm-legend-item"><div class="pdpm-legend-dot" style="background:#EF9F27"></div>NTA</div>
+              <div class="pdpm-legend-item"><div class="pdpm-legend-dot" style="background:#4472C4"></div>PT</div>
+              <div class="pdpm-legend-item"><div class="pdpm-legend-dot" style="background:#7BA7D4"></div>OT</div>
+              <div class="pdpm-legend-item"><div class="pdpm-legend-dot" style="background:#9B59B6"></div>SLP</div>
+              <div class="pdpm-legend-item"><div class="pdpm-legend-dot" style="background:#95A5A6"></div>Non-Case Mix</div>
+            </div>
+            <div class="pdpm-baseline-lbl">Baseline (Post-ARD)</div>
+            <div class="pdpm-baseline-row" id="pdpmBaselineRow"></div>
+          </div>
+          <div class="res-footer-area">
+            <div class="res-footer-lbl">Name</div>
+            <div class="res-footer-val" id="pdpmResFooter">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IPA RECOMMENDATIONS -->
+      <div id="p-ipa" class="page-wrap" style="display:none">
+        <div class="sec-hdr"><div><div class="sec-t">IPA Recommendations</div><div class="sec-s">AI-detected coding gaps — Sunrise Skilled Nursing</div></div><span class="pill p-d">14 open</span></div>
+        <div class="metrics">
+          <div class="met"><div class="met-lbl">Revenue at risk</div><div class="met-val" style="font-size:17px">$23,480</div><div class="met-d dn">uncaptured this period</div></div>
+          <div class="met"><div class="met-lbl">Critical</div><div class="met-val">3</div><div class="met-d dn">immediate action needed</div></div>
+          <div class="met"><div class="met-lbl">CMI lift if resolved</div><div class="met-val">+0.18</div><div class="met-d up">full impact</div></div>
+          <div class="met"><div class="met-lbl">Resolved today</div><div class="met-val">3</div><div class="met-d up">↑ progress being made</div></div>
+        </div>
+        <div id="ipaList"></div>
+      </div>
+
+      <!-- INSIGHTS -->
+      <div id="p-ins" class="page-wrap" style="display:none">
+        <div class="sec-hdr"><div><div class="sec-t">Insights <span class="beta-corner" style="position:static;display:inline-block;vertical-align:middle;margin-left:8px">BETA</span></div><div class="sec-s">Revenue, CMI trends &amp; PDPM performance</div></div></div>
+        <div class="metrics">
+          <div class="met"><div class="met-lbl">Monthly Medicare revenue</div><div class="met-val" style="font-size:17px">$412K</div><div class="met-d up">↑ $38K vs prior month</div></div>
+          <div class="met"><div class="met-lbl">Facility CMI</div><div class="met-val">1.62</div><div class="met-d up">↑ 0.11 this quarter</div></div>
+          <div class="met"><div class="met-lbl">Uncaptured revenue</div><div class="met-val" style="font-size:17px">$23.5K</div><div class="met-d dn">14 open gaps</div></div>
+          <div class="met"><div class="met-lbl">Annual revenue gain</div><div class="met-val" style="font-size:17px">$456K</div><div class="met-d up">from CMI improvement</div></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><div class="card-t">CMI trend vs national SNF benchmark</div><div class="ch-wrap"><canvas id="cmiCh"></canvas></div><div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:#aaa"><span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--pv);display:inline-block;border-radius:2px"></span>Your facility</span><span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:2px;background:#ccc;display:inline-block;border-radius:2px"></span>National avg (1.51)</span></div></div>
+          <div class="card"><div class="card-t">Revenue at risk by PDPM component</div><div class="ch-wrap"><canvas id="revCh"></canvas></div></div>
+        </div>
+        <div class="card"><div class="card-t">PDPM component capture rates</div>
+          <div class="prog-r"><div class="prog-lbl"><span>Physical therapy (PT)</span><span>1.74 avg · 87% captured</span></div><div class="prog-bar"><div class="prog-fill pf-green" style="width:87%"></div></div></div>
+          <div class="prog-r"><div class="prog-lbl"><span>Occupational therapy (OT)</span><span>1.61 avg · 80% captured</span></div><div class="prog-bar"><div class="prog-fill pf-green" style="width:80%"></div></div></div>
+          <div class="prog-r"><div class="prog-lbl"><span>Speech-language pathology (SLP)</span><span>1.38 avg · 55% captured ⚠</span></div><div class="prog-bar"><div class="prog-fill pf-amber" style="width:55%"></div></div></div>
+          <div class="prog-r"><div class="prog-lbl"><span>Nursing</span><span>1.58 avg · 79% captured</span></div><div class="prog-bar"><div class="prog-fill pf-green" style="width:79%"></div></div></div>
+          <div class="prog-r" style="margin-bottom:0"><div class="prog-lbl"><span>Non-therapy ancillary (NTA)</span><span>1.29 avg · 48% captured ⚠</span></div><div class="prog-bar"><div class="prog-fill pf-amber" style="width:48%"></div></div></div>
+        </div>
+      </div>
+
+      <!-- COMPLIANCE -->
+      <div id="p-comp" class="page-wrap" style="display:none">
+        <div class="sec-hdr"><div><div class="sec-t">Compliance &amp; Audit Readiness</div><div class="sec-s">Current period — Sunrise Skilled Nursing</div></div><span class="pill p-w">84% ready</span></div>
+        <div class="metrics">
+          <div class="met"><div class="met-lbl">Audit readiness</div><div class="met-val">84%</div><div class="met-d up">↑ 6 pts this month</div></div>
+          <div class="met"><div class="met-lbl">Doc gaps</div><div class="met-val">5</div><div class="met-d warn">before submission</div></div>
+          <div class="met"><div class="met-lbl">Coding errors</div><div class="met-val">3</div><div class="met-d dn">require correction</div></div>
+          <div class="met"><div class="met-lbl">Last MDS</div><div class="met-val" style="font-size:15px">May 1</div><div class="met-d up">✓ accepted</div></div>
+        </div>
+        <div class="card"><div class="card-t">Compliance checklist</div>
+          <div class="aud-row"><div class="aud-ck ck-ok"><i class="ti ti-check" style="font-size:10px"></i></div><div class="aud-txt">All ARD windows properly set for 28 active residents</div><div class="aud-dt">Verified 5/6</div></div>
+          <div class="aud-row"><div class="aud-ck ck-ok"><i class="ti ti-check" style="font-size:10px"></i></div><div class="aud-txt">HIPAA-compliant handling confirmed — PHI never exposed to public AI models</div><div class="aud-dt">Continuous</div></div>
+          <div class="aud-row"><div class="aud-ck ck-ok"><i class="ti ti-check" style="font-size:10px"></i></div><div class="aud-txt">ICD-10 codes validated against CMS lookup table for all submitted MDS</div><div class="aud-dt">Auto-checked</div></div>
+          <div class="aud-row"><div class="aud-ck ck-ok"><i class="ti ti-check" style="font-size:10px"></i></div><div class="aud-txt">MDS transmission logs archived — 90-day retention met</div><div class="aud-dt">Verified 5/5</div></div>
+          <div class="aud-row"><div class="aud-ck ck-fl"><i class="ti ti-x" style="font-size:10px"></i></div><div class="aud-txt">R. Thompson — physician co-signature missing on updated malnutrition orders</div><div class="aud-dt" style="color:#c0392b">Action needed</div></div>
+          <div class="aud-row"><div class="aud-ck ck-wn"><i class="ti ti-alert-triangle" style="font-size:10px"></i></div><div class="aud-txt">M. Delgado — MDD diagnosis not yet reflected in updated care plan</div><div class="aud-dt" style="color:#9a6200">Due 5/8</div></div>
+          <div class="aud-row"><div class="aud-ck ck-fl"><i class="ti ti-x" style="font-size:10px"></i></div><div class="aud-txt">A. Okafor — wound care documentation not formally linked to MDS NTA section</div><div class="aud-dt" style="color:#c0392b">Action needed</div></div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+
+    <!-- AI ASSISTANT -->
+    <div class="ai-wrap">
+      <div class="ai-panel" id="aiPanel">
+        <div class="ai-ph">
+          <div class="ai-ph-t"><div class="ai-dot"></div> CMI Max AI <span class="ai-mode-lbl demo" id="aiModeLbl">DEMO MODE</span></div>
+          <button class="ai-close" onclick="toggleAI()">×</button>
+        </div>
+        <div class="ai-mode-toggle">
+          <button class="ai-mode-btn on" id="btnDemo" onclick="setAIMode('demo')">🎯 Sales demo Q&amp;A</button>
+          <button class="ai-mode-btn" id="btnLive" onclick="setAIMode('live')">💬 In-app assistant</button>
+        </div>
+        <div class="ai-msgs" id="aiMsgs">
+          <div class="ai-m bot">Hi! I'm in <strong>Sales Demo mode</strong> — ask me anything about CMI Max to answer prospect questions in real time. Switch to <strong>In-App Assistant</strong> to show how staff would query the AI in daily workflows (patient lookups by MRN, fall counts, urgent alerts, etc.)</div>
+        </div>
+        <div class="ai-chips" id="aiChips"></div>
+        <div class="ai-inp-row">
+          <input class="ai-inp" id="aiInp" placeholder="Type any question…" onkeydown="if(event.key==='Enter')sendAI()"/>
+          <button class="ai-send" onclick="sendAI()">Send</button>
+        </div>
+      </div>
+      <button class="ai-fab" onclick="toggleAI()"><i class="ti ti-robot"></i> AI assistant</button>
+    </div>
+
+    <!-- IPA DETAIL MODAL -->
+    <div class="ipa-ov" id="ipaOv">
+      <div class="ipa-modal">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:11px">
+            <div class="av" id="imAv" style="width:36px;height:36px;font-size:12px;background:#eee;color:#888">?</div>
+            <div style="font-size:15px;font-weight:700;color:#222" id="imName">Resident</div>
+          </div>
+          <button onclick="closeIPAOv()" style="background:none;border:none;cursor:pointer;font-size:20px;color:#ccc;font-family:inherit">×</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px">
+          <div style="background:#f7f7fc;border-radius:8px;padding:11px 14px"><div style="font-size:10px;color:#bbb;margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Current CMI</div><div style="font-size:17px;font-weight:700;color:#222" id="imCMI">—</div></div>
+          <div style="background:#f7f7fc;border-radius:8px;padding:11px 14px"><div style="font-size:10px;color:#bbb;margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">ARD closes</div><div style="font-size:14px;font-weight:700;color:#222" id="imARD">—</div></div>
+          <div style="background:#f7f7fc;border-radius:8px;padding:11px 14px"><div style="font-size:10px;color:#bbb;margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Revenue if corrected</div><div style="font-size:14px;font-weight:700;color:#0a7a4c" id="imRev">—</div></div>
+          <div style="background:#f7f7fc;border-radius:8px;padding:11px 14px"><div style="font-size:10px;color:#bbb;margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">PDPM groups</div><div style="font-size:11px;color:#666;font-weight:600;line-height:1.5" id="imPDPM">—</div></div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.07em;margin:12px 0 6px">CMI Max AI finding</div>
+        <div style="font-size:12px;color:#333;line-height:1.6;padding:11px 14px;border-radius:8px;border-left:3px solid #EF9F27;background:#fff4e0" id="imFind">—</div>
+        <button onclick="closeIPAOv()" style="width:100%;margin-top:14px;padding:10px;border-radius:8px;border:1px solid #e0e0f0;background:#f7f7fc;cursor:pointer;font-size:13px;font-weight:700;color:var(--pv);font-family:inherit">Close</button>
+      </div>
+    </div>
+
+    <!-- DAY BREAKDOWN MODAL -->
+    <div class="day-ov" id="dayOv">
+      <div class="day-modal">
+        <div class="day-modal-title" id="dayTitle">Friday, Apr 17, 2026</div>
+        <div class="day-modal-sub" id="daySub">Day in stay: 5 · Total: $633.08</div>
+        <table class="day-tbl">
+          <thead><tr><th>Component</th><th>Amount</th><th>CMI</th><th>Base Rate</th><th>VPD</th><th>Multiplier</th></tr></thead>
+          <tbody id="dayBody"></tbody>
+        </table>
+        <button class="day-close-btn" onclick="closeDayOv()">Close</button>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+</div><!-- /app -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ===== DATA =====
+var RES = [
+  {name:'R. Thompson',mrn:'1627265',init:'RT',bg:'#fdecea',col:'#c0392b',admitted:'Mar 14',ard:'May 12',ardUrgent:true,cmi:'1.42',pdpm:'RUX / LE1',pdpmFull:'PT: RUX | NTA: A | Nsg: LE1',status:'p-d',statusTxt:'Critical gap',sev:'high',rev:'$3,840',find:'Malnutrition severity undercoded. Physician note documents severe protein-calorie malnutrition — MDS reflects only moderate. ICD-10 code mismatch detected across 3 documents.',
+   days:[{dt:'Mon, Apr 13',day:1,n:138.94,a:251.32,pt:64.16,ot:60.15,sl:14.98,nc:103.54,ard:false,base:1039},{dt:'Tue, Apr 14',day:2,n:138.94,a:251.32,pt:64.16,ot:60.15,sl:14.98,nc:103.54,ard:false,base:1039},{dt:'Wed, Apr 15',day:3,n:138.94,a:251.32,pt:64.16,ot:60.15,sl:14.98,nc:103.54,ard:false,base:1039},{dt:'Thu, Apr 16',day:4,n:0,a:0,pt:0,ot:0,sl:0,nc:103.54,ard:true,base:null},{dt:'Fri, Apr 17',day:5,n:138.94,a:251.32,pt:64.16,ot:60.15,sl:14.98,nc:103.54,ard:false,base:646},{dt:'Sat, Apr 18',day:6,n:138.94,a:251.32,pt:64.16,ot:60.15,sl:14.98,nc:103.54,ard:false,base:646},{dt:'Sun, Apr 19',day:7,n:138.94,a:251.32,pt:64.16,ot:60.15,sl:14.98,nc:103.54,ard:false,base:646}],
+   kb:{n:{cmi:1.27,base:109.40},a:{cmi:3.06,base:82.13},pt:{cmi:1.02,base:62.90},ot:{cmi:1.03,base:58.40},sl:{cmi:0.64,base:23.40},nc:{cmi:null,base:103.54}}},
+  {name:'M. Delgado',mrn:'2048391',init:'MD',bg:'#fff4e0',col:'#9a6200',admitted:'Apr 2',ard:'May 8',ardUrgent:true,cmi:'1.61',pdpm:'RUX / HE1',pdpmFull:'PT: RUX | OT: BO2 | Nsg: HE1',status:'p-d',statusTxt:'Critical gap',sev:'high',rev:'$2,210',find:'Major depressive disorder missing from MDS Section I. Psychiatry consult (Apr 28) confirms MDD. ARD closes in 2 days — immediate action required.',
+   days:[{dt:'Mon, Apr 27',day:1,n:162.10,a:189.40,pt:74.20,ot:68.30,sl:0,nc:103.54,ard:false,base:1039},{dt:'Tue, Apr 28',day:2,n:162.10,a:189.40,pt:74.20,ot:68.30,sl:0,nc:103.54,ard:false,base:1039},{dt:'Wed, Apr 29',day:3,n:162.10,a:189.40,pt:74.20,ot:68.30,sl:0,nc:103.54,ard:false,base:1039},{dt:'Thu, Apr 30',day:4,n:0,a:0,pt:0,ot:0,sl:0,nc:103.54,ard:true,base:null},{dt:'Fri, May 1',day:5,n:162.10,a:189.40,pt:74.20,ot:68.30,sl:0,nc:103.54,ard:false,base:646},{dt:'Sat, May 2',day:6,n:162.10,a:189.40,pt:74.20,ot:68.30,sl:0,nc:103.54,ard:false,base:646},{dt:'Sun, May 3',day:7,n:162.10,a:189.40,pt:74.20,ot:68.30,sl:0,nc:103.54,ard:false,base:646}],
+   kb:{n:{cmi:1.48,base:109.40},a:{cmi:2.30,base:82.13},pt:{cmi:1.18,base:62.90},ot:{cmi:1.17,base:58.40},sl:{cmi:null,base:0},nc:{cmi:null,base:103.54}}},
+  {name:'A. Okafor',mrn:'3391847',init:'AO',bg:'#fdecea',col:'#c0392b',admitted:'Apr 19',ard:'May 15',ardUrgent:false,cmi:'1.38',pdpm:'RLX / LE2',pdpmFull:'NTA: A | Nsg: LE2 | OT: BO1',status:'p-d',statusTxt:'Critical gap',sev:'high',rev:'$4,120',find:'Wound care NTA points not captured. Stage 3 pressure injury treatment confirmed in flowsheets. NTA item M1030 not selected despite active documentation.',
+   days:[{dt:'Mon, Apr 20',day:1,n:121.30,a:298.70,pt:58.40,ot:55.10,sl:0,nc:103.54,ard:false,base:1039},{dt:'Tue, Apr 21',day:2,n:121.30,a:298.70,pt:58.40,ot:55.10,sl:0,nc:103.54,ard:false,base:1039},{dt:'Wed, Apr 22',day:3,n:121.30,a:298.70,pt:58.40,ot:55.10,sl:0,nc:103.54,ard:false,base:1039},{dt:'Thu, Apr 23',day:4,n:0,a:0,pt:0,ot:0,sl:0,nc:103.54,ard:true,base:null},{dt:'Fri, Apr 24',day:5,n:121.30,a:298.70,pt:58.40,ot:55.10,sl:0,nc:103.54,ard:false,base:646},{dt:'Sat, Apr 25',day:6,n:121.30,a:298.70,pt:58.40,ot:55.10,sl:0,nc:103.54,ard:false,base:646},{dt:'Sun, Apr 26',day:7,n:121.30,a:298.70,pt:58.40,ot:55.10,sl:0,nc:103.54,ard:false,base:646}],
+   kb:{n:{cmi:1.11,base:109.40},a:{cmi:3.63,base:82.13},pt:{cmi:0.93,base:62.90},ot:{cmi:0.94,base:58.40},sl:{cmi:null,base:0},nc:{cmi:null,base:103.54}}},
+  {name:'D. Park',mrn:'4820193',init:'DP',bg:'#fff4e0',col:'#9a6200',admitted:'Mar 28',ard:'May 18',ardUrgent:false,cmi:'1.55',pdpm:'RMX / ME1',pdpmFull:'PT: RMX | NTA: C | Nsg: ME1',status:'p-w',statusTxt:'Review needed',sev:'med',rev:'$1,560',find:'COPD functional impact incomplete in MDS Section J. Respiratory therapy notes reference moderate exacerbation not yet reflected in assessment.',
+   days:[{dt:'Mon, Apr 13',day:1,n:148.20,a:178.60,pt:72.10,ot:58.90,sl:18.40,nc:103.54,ard:false,base:1039},{dt:'Tue, Apr 14',day:2,n:148.20,a:178.60,pt:72.10,ot:58.90,sl:18.40,nc:103.54,ard:false,base:1039},{dt:'Wed, Apr 15',day:3,n:148.20,a:178.60,pt:72.10,ot:58.90,sl:18.40,nc:103.54,ard:false,base:1039},{dt:'Thu, Apr 16',day:4,n:0,a:0,pt:0,ot:0,sl:0,nc:103.54,ard:true,base:null},{dt:'Fri, Apr 17',day:5,n:148.20,a:178.60,pt:72.10,ot:58.90,sl:18.40,nc:103.54,ard:false,base:646},{dt:'Sat, Apr 18',day:6,n:148.20,a:178.60,pt:72.10,ot:58.90,sl:18.40,nc:103.54,ard:false,base:646},{dt:'Sun, Apr 19',day:7,n:148.20,a:178.60,pt:72.10,ot:58.90,sl:18.40,nc:103.54,ard:false,base:646}],
+   kb:{n:{cmi:1.35,base:109.40},a:{cmi:2.17,base:82.13},pt:{cmi:1.15,base:62.90},ot:{cmi:1.01,base:58.40},sl:{cmi:0.79,base:23.40},nc:{cmi:null,base:103.54}}},
+  {name:'P. Williams',mrn:'5637204',init:'PW',bg:'#fff4e0',col:'#9a6200',admitted:'Apr 10',ard:'May 20',ardUrgent:false,cmi:'1.49',pdpm:'RMX / ME2',pdpmFull:'NTA: B | OT: BO1 | Nsg: ME2',status:'p-w',statusTxt:'Review needed',sev:'med',rev:'$2,900',find:'Active chemotherapy protocol confirmed by oncology orders. NTA item O0400 not reflected in current MDS — high-value points being missed.',
+   days:[{dt:'Mon, Apr 13',day:1,n:155.40,a:214.80,pt:62.90,ot:60.15,sl:14.20,nc:103.54,ard:false,base:1039},{dt:'Tue, Apr 14',day:2,n:155.40,a:214.80,pt:62.90,ot:60.15,sl:14.20,nc:103.54,ard:false,base:1039},{dt:'Wed, Apr 15',day:3,n:155.40,a:214.80,pt:62.90,ot:60.15,sl:14.20,nc:103.54,ard:false,base:1039},{dt:'Thu, Apr 16',day:4,n:0,a:0,pt:0,ot:0,sl:0,nc:103.54,ard:true,base:null},{dt:'Fri, Apr 17',day:5,n:155.40,a:214.80,pt:62.90,ot:60.15,sl:14.20,nc:103.54,ard:false,base:646},{dt:'Sat, Apr 18',day:6,n:155.40,a:214.80,pt:62.90,ot:60.15,sl:14.20,nc:103.54,ard:false,base:646},{dt:'Sun, Apr 19',day:7,n:155.40,a:214.80,pt:62.90,ot:60.15,sl:14.20,nc:103.54,ard:false,base:646}],
+   kb:{n:{cmi:1.42,base:109.40},a:{cmi:2.61,base:82.13},pt:{cmi:1.00,base:62.90},ot:{cmi:1.03,base:58.40},sl:{cmi:0.61,base:23.40},nc:{cmi:null,base:103.54}}},
+  {name:'L. Chen',mrn:'6104827',init:'LC',bg:'#eaeaff',col:'#3333cc',admitted:'Feb 11',ard:'May 22',ardUrgent:false,cmi:'1.74',pdpm:'RHX / HE2',pdpmFull:'SLP: CC | Nsg: HE2 | OT: BO3',status:'p-w',statusTxt:'Review needed',sev:'med',rev:'$890',find:'CPS score of 2 may understate current cognitive status. Recent nursing narrative suggests increased confusion — reassessment recommended before ARD closes.',
+   days:[{dt:'Mon, Apr 13',day:1,n:178.60,a:168.30,pt:68.90,ot:62.40,sl:24.80,nc:103.54,ard:false,base:1039},{dt:'Tue, Apr 14',day:2,n:178.60,a:168.30,pt:68.90,ot:62.40,sl:24.80,nc:103.54,ard:false,base:1039},{dt:'Wed, Apr 15',day:3,n:178.60,a:168.30,pt:68.90,ot:62.40,sl:24.80,nc:103.54,ard:false,base:1039},{dt:'Thu, Apr 16',day:4,n:0,a:0,pt:0,ot:0,sl:0,nc:103.54,ard:true,base:null},{dt:'Fri, Apr 17',day:5,n:178.60,a:168.30,pt:68.90,ot:62.40,sl:24.80,nc:103.54,ard:false,base:646},{dt:'Sat, Apr 18',day:6,n:178.60,a:168.30,pt:68.90,ot:62.40,sl:24.80,nc:103.54,ard:false,base:646},{dt:'Sun, Apr 19',day:7,n:178.60,a:168.30,pt:68.90,ot:62.40,sl:24.80,nc:103.54,ard:false,base:646}],
+   kb:{n:{cmi:1.63,base:109.40},a:{cmi:2.05,base:82.13},pt:{cmi:1.10,base:62.90},ot:{cmi:1.07,base:58.40},sl:{cmi:1.06,base:23.40},nc:{cmi:null,base:103.54}}},
+  {name:'B. Martinez',mrn:'7293015',init:'BM',bg:'#e6f7ef',col:'#0a7a4c',admitted:'Jan 30',ard:'May 25',ardUrgent:false,cmi:'1.88',pdpm:'RUX / HE1',pdpmFull:'PT: RUX | NTA: A | Nsg: HE1',status:'p-ok',statusTxt:'Complete',sev:'ok',rev:'—',find:'Documentation complete. All five PDPM components accurately coded. No gaps detected across physician notes, nursing narratives, or therapy documentation.',
+   days:[{dt:'Mon, Apr 13',day:1,n:195.30,a:261.40,pt:78.60,ot:68.20,sl:22.10,nc:103.54,ard:false,base:1039},{dt:'Tue, Apr 14',day:2,n:195.30,a:261.40,pt:78.60,ot:68.20,sl:22.10,nc:103.54,ard:false,base:1039},{dt:'Wed, Apr 15',day:3,n:195.30,a:261.40,pt:78.60,ot:68.20,sl:22.10,nc:103.54,ard:false,base:1039},{dt:'Thu, Apr 16',day:4,n:0,a:0,pt:0,ot:0,sl:0,nc:103.54,ard:true,base:null},{dt:'Fri, Apr 17',day:5,n:195.30,a:261.40,pt:78.60,ot:68.20,sl:22.10,nc:103.54,ard:false,base:646},{dt:'Sat, Apr 18',day:6,n:195.30,a:261.40,pt:78.60,ot:68.20,sl:22.10,nc:103.54,ard:false,base:646},{dt:'Sun, Apr 19',day:7,n:195.30,a:261.40,pt:78.60,ot:68.20,sl:22.10,nc:103.54,ard:false,base:646}],
+   kb:{n:{cmi:1.79,base:109.40},a:{cmi:3.18,base:82.13},pt:{cmi:1.25,base:62.90},ot:{cmi:1.17,base:58.40},sl:{cmi:0.94,base:23.40},nc:{cmi:null,base:103.54}}}
+];
+
+var curRes=null, pdpmChart=null, aiOpen=false, aiBusy=false, aiMode='demo';
+var weekOffset=0;
+var MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MONTH_IDX={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+var WEEKDAY_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var PAGES=['home','orgs','res','pdpm','ipa','ins','comp'];
+
+// ===== NAV =====
+function go(p){
+  PAGES.forEach(function(x){var e=document.getElementById('p-'+x);if(e)e.style.display=x===p?'block':'none';});
+  ['home','orgs','res','ipa','ins','comp'].forEach(function(x){var e=document.getElementById('nb-'+x);if(e)e.classList[x===p?'add':'remove']('on');});
+  if(p==='ins')drawInsCharts();
+  if(p==='res')renderRes();
+  if(p==='ipa')renderIPA();
+}
+function setRole(r){
+  document.querySelectorAll('.r-tab').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.r-tab')[{mds:0,clinical:1,admin:2,all:3}[r]].classList.add('on');
+  if(r==='admin')go('ins'); else if(r==='clinical')go('res'); else if(r==='mds')go('ipa'); else go('home');
+}
+
+// ===== RESIDENTS TABLE =====
+function renderRes(filter){
+  var f=(filter||'').toLowerCase();
+  var tb=document.getElementById('resTbody'); tb.innerHTML='';
+  RES.forEach(function(r,i){
+    if(f&&!r.name.toLowerCase().includes(f)&&!r.mrn.includes(f))return;
+    var ard=r.ardUrgent?'<strong style="color:#c0392b">'+r.ard+'</strong>':r.ard;
+    var tr=document.createElement('tr'); tr.className='rr';
+    tr.innerHTML='<td><div class="av" style="background:'+r.bg+';color:'+r.col+'">'+r.init+'</div></td>'+
+      '<td><div class="res-name-wrap">'+
+        '<span class="res-link" data-i="'+i+'" onmouseenter="showTip(event,'+i+')" onmouseleave="hideTips()" onclick="openPDPM('+i+')">'+r.name+'</span>'+
+        '<span class="mrn-sub">#'+r.mrn+'</span>'+
+        '<div class="htip" id="ht'+i+'"></div>'+
+      '</div></td>'+
+      '<td style="font-family:monospace;font-size:11px;color:#aaa">#'+r.mrn+'</td>'+
+      '<td>'+r.admitted+'</td><td>'+ard+'</td>'+
+      '<td><strong>'+r.cmi+'</strong></td>'+
+      '<td style="font-size:11px;color:#888">'+r.pdpm+'</td>'+
+      '<td><span class="pill '+r.status+'">'+r.statusTxt+'</span></td>';
+    tb.appendChild(tr);
+  });
+}
+function filterRes(){renderRes(document.getElementById('resSearch').value);}
+
+// ===== HOVER TIP =====
+function showTip(e,i){
+  var r=RES[i];
+  var ht=document.getElementById('ht'+i);
+  if(!ht)return;
+  ht.innerHTML='<div class="htip-name">'+r.name+' <span style="font-size:10px;font-weight:400;color:#bbb;font-family:monospace">#'+r.mrn+'</span></div>'+
+    '<div class="htip-grid">'+
+    '<div class="htip-met"><div class="htip-lbl">CMI</div><div class="htip-val">'+r.cmi+'</div></div>'+
+    '<div class="htip-met"><div class="htip-lbl">ARD</div><div class="htip-val" style="font-size:12px">'+r.ard+'</div></div>'+
+    '<div class="htip-met"><div class="htip-lbl">Revenue gap</div><div class="htip-val" style="color:#0a7a4c;font-size:13px">'+r.rev+'</div></div>'+
+    '<div class="htip-met"><div class="htip-lbl">PDPM</div><div class="htip-val" style="font-size:10px;color:#666;font-weight:600">'+r.pdpm+'</div></div>'+
+    '</div>'+
+    '<div class="htip-find '+(r.sev==='ok'?'ok':r.sev==='high'?'high':'')+'">'+r.find+'</div>'+
+    '<div class="htip-hint">Click to view Daily PDPM chart →</div>';
+  ht.classList.add('show');
+}
+function hideTips(){document.querySelectorAll('.htip').forEach(function(t){t.classList.remove('show');});}
+
+// ===== PDPM CHART =====
+function openPDPM(i){hideTips();curRes=RES[i];weekOffset=0;document.getElementById('pdpmResName').textContent=curRes.name;document.getElementById('pdpmResFooter').textContent=curRes.name;go('pdpm');setTimeout(drawPDPM,80);}
+function shiftWeek(d){
+  var next=weekOffset+d;
+  if(next<0)return; // can't view weeks before admission
+  weekOffset=next;
+  drawPDPM();
+}
+function parseDT(dtStr){
+  // e.g. "Mon, Apr 13" -> Date. Year fixed at 2026 to match the rest of the demo.
+  var parts=dtStr.split(', ')[1].split(' ');
+  return new Date(2026, MONTH_IDX[parts[0]], parseInt(parts[1],10));
+}
+function getWeekDays(r, offset){
+  var tmpl=r.days; // 7-day template; index 3 (Thu) is the true ARD day at offset 0
+  var ardIdx=3;
+  var start=parseDT(tmpl[0].dt);
+  start.setDate(start.getDate()+offset*7);
+  var out=[];
+  for(var idx=0; idx<7; idx++){
+    var d=new Date(start); d.setDate(d.getDate()+idx);
+    var isArd=(offset===0 && idx===ardIdx);
+    var base=tmpl[0]; // component $ amounts are constant across non-ARD days for a resident
+    var baseRate=isArd?null:(offset===0?(idx<ardIdx?1039:646):(offset>0?646:1039));
+    out.push({
+      dt:WEEKDAY_SHORT[d.getDay()]+', '+MONTHS_SHORT[d.getMonth()]+' '+d.getDate(),
+      day:offset*7+idx+1,
+      n:isArd?0:base.n, a:isArd?0:base.a, pt:isArd?0:base.pt, ot:isArd?0:base.ot, sl:isArd?0:base.sl, nc:base.nc,
+      ard:isArd, base:baseRate
+    });
+  }
+  return out;
+}
+function drawPDPM(){
+  var r=curRes; if(!r)return;
+  var days=getWeekDays(r, weekOffset);
+  var prevBtn=document.getElementById('pdpmPrevBtn');
+  if(prevBtn){prevBtn.disabled=(weekOffset===0);prevBtn.style.opacity=(weekOffset===0?'.4':'1');prevBtn.style.cursor=(weekOffset===0?'default':'pointer');}
+  var lbl=document.getElementById('pdpmWeekLbl');
+  if(lbl)lbl.textContent=days[0].dt+' – '+days[6].dt+(weekOffset===0?' (current)':'');
+  var labels=days.map(function(d){return[d.dt.split(',')[0],'Day '+d.day];});
+  function vals(k){return days.map(function(d){return d.ard?0:d[k];});}
+  var br=document.getElementById('pdpmBaselineRow');
+  br.innerHTML=days.map(function(d){
+    if(d.ard)return '<span><span class="ard-badge">ARD</span></span>';
+    return '<span>$'+d.base+'</span>';
+  }).join('');
+  if(pdpmChart){pdpmChart.destroy();pdpmChart=null;}
+  pdpmChart=new Chart(document.getElementById('pdpmChart'),{
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[
+        {label:'Nursing',data:vals('n'),backgroundColor:'#1D9E75',stack:'s',borderRadius:3},
+        {label:'NTA',data:vals('a'),backgroundColor:'#EF9F27',stack:'s'},
+        {label:'PT',data:vals('pt'),backgroundColor:'#4472C4',stack:'s'},
+        {label:'OT',data:vals('ot'),backgroundColor:'#7BA7D4',stack:'s'},
+        {label:'SLP',data:vals('sl'),backgroundColor:'#9B59B6',stack:'s'},
+        {label:'Non-Case Mix',data:days.map(function(d){return d.nc;}),backgroundColor:days.map(function(d){return d.ard?'repeating-linear-gradient(45deg,#ccc,#ccc 2px,#eee 2px,#eee 6px)':'#95A5A6';}),stack:'s'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{
+        title:function(items){return days[items[0].dataIndex].dt;},
+        afterBody:function(items){var d=days[items[0].dataIndex];var tot=(d.n+d.a+d.pt+d.ot+d.sl+d.nc).toFixed(2);return['Total: $'+tot,d.ard?'Assessment Reference Date':''];}
+      }}},
+      onClick:function(e,el){if(!el.length)return;openDayModal(days[el[0].index],r);},
+      scales:{
+        x:{stacked:true,ticks:{font:{size:10}},grid:{display:false}},
+        y:{stacked:true,ticks:{font:{size:10},callback:function(v){return'$'+v;}},grid:{color:'rgba(0,0,0,0.04)'}}
+      }
+    }
+  });
+  // Highlight ARD bar with orange border overlay
+  days.forEach(function(d,i){
+    if(d.ard){
+      // Chart.js afterDraw plugin would normally do this; visual cue via the label is sufficient for demo
+    }
+  });
+}
+
+// ===== DAY MODAL =====
+function openDayModal(d,r){
+  document.getElementById('dayTitle').textContent=d.dt+', 2026';
+  var tot=(d.n+d.a+d.pt+d.ot+d.sl+d.nc).toFixed(2);
+  document.getElementById('daySub').textContent='Day in stay: '+d.day+' · Total: $'+tot;
+  var comps=[
+    {name:'Nursing',amt:d.n,cmi:r.kb.n.cmi,base:r.kb.n.base,color:'#1D9E75'},
+    {name:'NTA',amt:d.a,cmi:r.kb.a.cmi,base:r.kb.a.base,color:'#EF9F27'},
+    {name:'PT',amt:d.pt,cmi:r.kb.pt.cmi,base:r.kb.pt.base,color:'#4472C4'},
+    {name:'OT',amt:d.ot,cmi:r.kb.ot.cmi,base:r.kb.ot.base,color:'#7BA7D4'},
+    {name:'SLP',amt:d.sl,cmi:r.kb.sl.cmi,base:r.kb.sl.base,color:'#9B59B6'},
+    {name:'Non-Case Mix',amt:d.nc,cmi:null,base:r.kb.nc.base,color:'#95A5A6'}
+  ];
+  document.getElementById('dayBody').innerHTML=comps.map(function(c){
+    return'<tr><td>'+c.name+'</td><td>$'+c.amt.toFixed(2)+'</td>'+
+      '<td>'+(c.cmi?'<span class="cmi-badge" style="background:'+c.color+'">'+c.cmi.toFixed(2)+'</span>':'<span style="color:#bbb">—</span>')+'</td>'+
+      '<td>$'+c.base.toFixed(2)+'</td><td>1.00</td><td>1.00</td></tr>';
+  }).join('');
+  document.getElementById('dayOv').classList.add('open');
+}
+function closeDayOv(){document.getElementById('dayOv').classList.remove('open');}
+
+// ===== IPA LIST =====
+function renderIPA(){
+  var sevMap={high:'h',med:'m',low:'l'};
+  var icnMap={high:'ti-alert-circle',med:'ti-alert-triangle',low:'ti-info-circle'};
+  var colMap={high:'#c0392b',med:'#9a6200',low:'var(--pv)'};
+  var labMap={high:'Critical',med:'Moderate',low:'Low'};
+  var sevBg={high:'#fdecea',med:'#fff4e0',low:'#eaeaff'};
+  var sevCol={high:'#c0392b',med:'#9a6200',low:'var(--pv)'};
+  var container=document.getElementById('ipaList');
+  container.innerHTML='';
+  RES.forEach(function(r){
+    if(r.sev==='ok')return;
+    var div=document.createElement('div');
+    div.className='ipa';
+    div.innerHTML='<div class="ipa-ico '+sevMap[r.sev]+'"><i class="ti '+icnMap[r.sev]+'" style="color:'+colMap[r.sev]+';font-size:22px"></i></div>'+
+      '<div class="ipa-body"><div class="ipa-t">'+r.name+' — '+r.find.split('.')[0]+' <span class="sev" style="background:'+sevBg[r.sev]+';color:'+sevCol[r.sev]+'">'+labMap[r.sev]+'</span></div>'+
+      '<div class="ipa-s">'+r.find+'</div>'+
+      '<div class="ipa-r">'+( r.rev!=='—'?'+'+r.rev+' PDPM revenue if corrected':'No revenue gap — documentation complete')+'</div></div>';
+    div.onclick=function(){openIPAOv(r.name,r.init,r.bg,r.col,r.cmi,r.ard,r.rev,r.pdpmFull,r.find,r.sev);};
+    container.appendChild(div);
+  });
+}
+function openIPAOv(name,init,bg,col,cmi,ard,rev,pdpm,find,sev){
+  var av=document.getElementById('imAv'); av.textContent=init; av.style.background=bg; av.style.color=col;
+  document.getElementById('imName').textContent=name;
+  document.getElementById('imCMI').textContent=cmi;
+  document.getElementById('imARD').textContent=ard;
+  document.getElementById('imRev').textContent=rev;
+  document.getElementById('imPDPM').textContent=pdpm;
+  var f=document.getElementById('imFind'); f.textContent=find;
+  f.style.background=sev==='high'?'#fdecea':sev==='ok'?'#e6f7ef':'#fff4e0';
+  f.style.borderColor=sev==='high'?'#c0392b':sev==='ok'?'#1D9E75':'#EF9F27';
+  document.getElementById('ipaOv').classList.add('open');
+}
+function closeIPAOv(){document.getElementById('ipaOv').classList.remove('open');}
+
+// ===== AI =====
+var DEMO_CHIPS=[
+  {l:'What is CMI?',q:'What is CMI and why does it directly affect Medicare reimbursement?'},
+  {l:'How gaps are detected',q:'How exactly does CMI Max detect coding gaps in resident documentation?'},
+  {l:'Explain PDPM',q:'What is PDPM and how do the five components affect the daily rate?'},
+  {l:'EHR integration',q:'How does CMI Max connect to our EHR without disrupting workflows?'},
+  {l:'HIPAA compliance',q:'Is CMI Max HIPAA compliant and how is patient data protected?'},
+  {l:'Expected ROI',q:'What ROI can a 100-bed SNF realistically expect from CMI Max?'},
+  {l:'What is an IPA?',q:'What is an IPA Recommendation in CMI Max?'},
+  {l:'vs. manual review',q:'How is CMI Max different from having our MDS coordinator manually review charts?'}
+];
+var LIVE_CHIPS=[
+  {l:'MRN 1627265',q:'Show me patient with MRN 1627265 and explain their coding gaps.'},
+  {l:'Falls this week',q:'How many falls have we had this week?'},
+  {l:'Highest revenue gaps',q:'Which residents have the highest revenue at risk from coding gaps?'},
+  {l:'ARD closing soon',q:'Which residents have ARD windows closing in the next 3 days?'},
+  {l:'Missed NTA',q:'Are there any missed NTA opportunities I should know about right now?'},
+  {l:'Compliance issues',q:'What compliance issues need attention before our next survey?'},
+  {l:'MRN 3391847 wounds',q:'Show me MRN 3391847 and explain why their wound care NTA is missing.'},
+  {l:"Today's alerts",q:"What are today's most urgent alerts across all residents?"}
+];
+function setAIMode(m){
+  aiMode=m;
+  document.getElementById('btnDemo').classList[m==='demo'?'add':'remove']('on');
+  document.getElementById('btnLive').classList[m==='live'?'add':'remove']('on');
+  var lbl=document.getElementById('aiModeLbl'); lbl.textContent=m==='demo'?'DEMO MODE':'IN-APP MODE'; lbl.className='ai-mode-lbl '+(m==='demo'?'demo':'live');
+  renderChips(m==='demo'?DEMO_CHIPS:LIVE_CHIPS);
+  var msgs=document.getElementById('aiMsgs');
+  var d=document.createElement('div'); d.className='ai-m bot';
+  d.innerHTML=m==='demo'?'Switched to <strong>Sales Demo mode</strong>. Ask me anything about CMI Max to support the pitch.':'Switched to <strong>In-App Assistant mode</strong>. Ask me anything a real staff member would — patient lookups by MRN, incident counts, urgent alerts, compliance issues.';
+  msgs.appendChild(d); msgs.scrollTop=9999;
+}
+function renderChips(chips){
+  var c=document.getElementById('aiChips'); c.innerHTML='';
+  chips.forEach(function(ch){var d=document.createElement('div');d.className='ai-chip';d.textContent=ch.l;d.onclick=function(){askAI(ch.q);};c.appendChild(d);});
+}
+function toggleAI(){aiOpen=!aiOpen;document.getElementById('aiPanel').classList[aiOpen?'add':'remove']('open');}
+function askAI(q){document.getElementById('aiInp').value=q;sendAI();}
+function sendAI(){
+  if(aiBusy)return;
+  var inp=document.getElementById('aiInp'),q=inp.value.trim(); if(!q)return; inp.value='';
+  var msgs=document.getElementById('aiMsgs');
+  var um=document.createElement('div');um.className='ai-m user';um.textContent=q;msgs.appendChild(um);
+  var bm=document.createElement('div');bm.className='ai-m bot';bm.textContent='Thinking…';msgs.appendChild(bm);
+  msgs.scrollTop=9999; aiBusy=true;
+  var resCtx='';
+  if(aiMode==='live'){
+    resCtx='CURRENT FACILITY DATA:\n';
+    RES.forEach(function(r){var tot=(r.days[0].n+r.days[0].a+r.days[0].pt+r.days[0].ot+r.days[0].sl+r.days[0].nc).toFixed(2);resCtx+='- '+r.name+' | MRN:'+r.mrn+' | CMI:'+r.cmi+' | ARD:'+r.ard+' | Status:'+r.statusTxt+' | Revenue gap:'+r.rev+' | Finding: '+r.find+' | Daily total:$'+tot+'\n';});
+    resCtx+='\nIncident log: 0 falls this week. 1 fall last week (B. Martinez Apr 29, no injury). 2 falls total this month. 3 skin integrity incidents this month.\n';
+    resCtx+='Compliance: 2 open issues (R. Thompson co-signature missing; A. Okafor wound care gap). Next survey window: Jun 2026.\n';
+  }
+  var sys=aiMode==='demo'
+    ?'You are a confident sales support assistant for CMI Max by Patient Voice AI — an AI-powered PDPM coding optimization and CMI management platform for Skilled Nursing Facilities. Key facts: detects IPA coding gaps via NLP on clinical documents, integrates with EHR via HL7/FHIR, HIPAA compliant (PHI never used in public AI), typical 60-90 day ROI, $400K+ annualized revenue gain per 100-bed SNF. Answer in 2-4 plain-language sentences for healthcare executives or MDS coordinators.'
+    :'You are the CMI Max in-app AI assistant helping SNF clinical staff with their daily workflow. Answer questions about specific patients by MRN or name, report incidents, flag compliance issues, and surface coding opportunities using the facility data provided. Be conversational, clinical, and specific.\n\n'+resCtx;
+  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})})
+  .then(function(r){return r.json();})
+  .then(function(d){bm.textContent=(d.content&&d.content[0]&&d.content[0].text)||fallback(q);msgs.scrollTop=9999;aiBusy=false;})
+  .catch(function(){bm.textContent=fallback(q);msgs.scrollTop=9999;aiBusy=false;});
+}
+function dollarNum(s){if(!s||s==='—')return 0;return parseFloat(s.replace(/[^0-9.]/g,''))||0;}
+function residentAnswer(r){
+  var base=r.name+' (MRN '+r.mrn+'): CMI '+r.cmi+', ARD closes '+r.ard+'. ';
+  if(r.sev==='ok')return base+'Documentation is complete — all five PDPM components accurately coded, no gaps detected.';
+  return base+(r.sev==='high'?'Critical gap':'Gap flagged')+' — '+r.find+(r.rev!=='—'?' Correcting this adds '+r.rev+' in PDPM revenue.':'');
+}
+function fallback(q){
+  var ql=q.toLowerCase();
+
+  // Greetings / thanks — keep it short and redirect
+  if(/^(hi|hello|hey)\b/.test(ql))return'Hi! Ask me about a specific resident (by name or MRN), CMI, PDPM, revenue at risk, compliance, or how CMI Max works.';
+  if(ql.includes('thank'))return"You're welcome! Let me know if there's anything else you'd like to dig into.";
+
+  // Per-resident lookups — works for any resident in RES, not just a hardcoded pair
+  for(var i=0;i<RES.length;i++){
+    var r=RES[i];
+    var last=r.name.toLowerCase().split(' ').pop();
+    if(ql.includes(r.mrn)||ql.includes(last))return residentAnswer(r);
+  }
+
+  if(ql.includes('fall'))return'No falls this week. There was 1 fall last week — B. Martinez on Apr 29, no injury reported. Total falls this month: 2. All incidents are documented in the compliance log.';
+
+  if(ql.includes('highest')&&(ql.includes('revenue')||ql.includes('risk')||ql.includes('gap'))){
+    var top=RES.filter(function(r){return dollarNum(r.rev)>0;}).sort(function(a,b){return dollarNum(b.rev)-dollarNum(a.rev);}).slice(0,3);
+    return'Highest revenue gaps right now: '+top.map(function(r){return r.name+' ('+r.rev+')';}).join(', ')+'. Total uncaptured revenue across all residents: $23,480.';
+  }
+
+  if(ql.includes('ard')&&(ql.includes('soon')||ql.includes('3 day')||ql.includes('closing')))return'Urgent: M. Delgado (MRN 2048391) ARD closes May 8 — 2 days away, MDD gap still open. R. Thompson (MRN 1627265) ARD closes May 12. Both need immediate action to avoid losing that reimbursement.';
+
+  if(ql.includes('nta'))return'Two high-value NTA gaps open right now: A. Okafor missing wound care item M1030 ($4,120) and P. Williams missing chemotherapy item O0400 ($2,900). Total uncaptured NTA revenue: $7,020.';
+
+  if(ql.includes('alert')||ql.includes('urgent')||ql.includes("today's"))return"Today's top alerts: (1) M. Delgado ARD closes May 8 — MDD gap open. (2) R. Thompson co-signature missing on orders. (3) A. Okafor wound care doc not linked to MDS NTA. Total revenue at risk across all gaps: $23,480.";
+
+  if(ql.includes('compliance')||ql.includes('audit')||ql.includes('survey'))return'Audit readiness is at 84%, up 6 points this month. Two open items need attention: R. Thompson is missing a physician co-signature on updated malnutrition orders, and A. Okafor\'s wound care documentation isn\'t yet linked to the MDS NTA section. Everything else — ARD windows, ICD-10 validation, transmission logs — is current.';
+
+  if((ql.includes('manual')&&(ql.includes('review')||ql.includes('coordinator')))||(ql.includes('different')&&ql.includes('mds')))return'A manual chart review by one MDS coordinator can only cover so many residents so often. CMI Max reads every physician note, nursing narrative, and therapy record continuously across the whole census, so gaps are flagged the day they appear — not days later during a periodic review, and not missed because of caseload.';
+
+  if(ql.includes('cost')||ql.includes('price')||ql.includes('pricing'))return"Pricing is tailored to facility size and how many residents you're managing — happy to work through those numbers together after the demo. Most facilities see it pay for itself within the first 60–90 days from recovered PDPM revenue alone.";
+
+  if(ql.includes('cmi')||ql.includes('case mix'))return'Case Mix Index (CMI) determines how much Medicare pays per patient day — a higher CMI means higher reimbursement per resident. CMI Max ensures every resident\'s true clinical complexity is accurately coded so your facility captures every dollar it has earned.';
+  if(ql.includes('gap')||ql.includes('detect'))return'CMI Max uses NLP to read physician notes, nursing narratives, therapy records, and labs simultaneously — flagging diagnoses and NTA conditions not captured in the MDS. In this demo alone, it caught $23,480 in uncaptured revenue across just 7 residents.';
+  if(ql.includes('pdpm'))return'PDPM pays SNFs based on five case-mix components: PT, OT, SLP, Nursing, and NTA. Missing even one qualifying diagnosis can drop a resident\'s daily rate by $40–$150. CMI Max catches those gaps before your ARD window closes.';
+  if(ql.includes('ehr')||ql.includes('integrat'))return'CMI Max connects to your existing EHR via HL7/FHIR — no rip-and-replace. It reads clinical documentation in real time and pushes IPA recommendations to MDS coordinators inside their current workflow.';
+  if(ql.includes('hipaa')||ql.includes('secure'))return'CMI Max is fully HIPAA compliant. PHI is never used to train public AI models, all data is encrypted in transit and at rest, and every recommendation has a full traceable audit trail.';
+  if(ql.includes('roi')||ql.includes('revenue')||ql.includes('return'))return'Most facilities reach positive ROI within 60–90 days. A 100-bed SNF lifting CMI by just 0.10 through better PDPM coding generates over $400,000 in additional annual Medicare revenue.';
+  if(ql.includes('ipa'))return'IPA stands for Identified Patient Acuity — each AI-detected coding gap. Every IPA shows the specific clinical finding, which PDPM component it affects, and the exact dollar amount left on the table if not corrected before the ARD closes.';
+  if(ql.includes('implement')||ql.includes('onboard')||ql.includes('setup')||ql.includes('how long')||ql.includes('training'))return"Most facilities are fully onboarded within a few weeks — connecting to your EHR via HL7/FHIR, then a short training session for MDS coordinators. There's no workflow overhaul; CMI Max surfaces its recommendations inside the tools your team already uses.";
+
+  if(aiMode==='live')return"I can help with specific resident lookups (by name or MRN), incident counts, ARD deadlines, revenue gaps, or compliance status — try asking about a specific resident or metric.";
+  return'CMI Max helps SNFs maximize PDPM reimbursement by detecting coding gaps, surfacing missed diagnoses and NTA points, and providing real-time CMI dashboards — fully integrated with your EHR and HIPAA compliant.';
+}
+
+// ===== INSIGHTS CHARTS =====
+var cmiChartInst=null, revChartInst=null;
+function drawInsCharts(){
+  if(cmiChartInst){cmiChartInst.destroy();cmiChartInst=null;}
+  if(revChartInst){revChartInst.destroy();revChartInst=null;}
+  cmiChartInst=new Chart(document.getElementById('cmiCh'),{type:'line',data:{labels:["May'24",'Jun','Jul','Aug','Sep','Oct','Nov','Dec',"Jan'25",'Feb','Mar','Apr',"May'25"],datasets:[{label:'Your CMI',data:[1.31,1.35,1.38,1.42,1.46,1.50,1.53,1.55,1.57,1.59,1.61,1.62,1.62],borderColor:'#3333cc',backgroundColor:'rgba(51,51,204,0.07)',tension:.4,pointRadius:3,pointBackgroundColor:'#3333cc',fill:true,borderWidth:2.5},{label:'National avg',data:[1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51,1.51],borderColor:'#ccc',borderDash:[6,4],tension:0,pointRadius:0,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:1.2,max:1.8,ticks:{font:{size:10},callback:function(v){return v.toFixed(2);}},grid:{color:'rgba(0,0,0,0.04)'}},x:{ticks:{font:{size:9},maxRotation:45},grid:{display:false}}}}});
+  revChartInst=new Chart(document.getElementById('revCh'),{type:'bar',data:{labels:['NTA','PT','Nursing','OT','SLP'],datasets:[{data:[8460,4840,4210,3890,2080],backgroundColor:'rgba(51,51,204,0.12)',borderColor:'#3333cc',borderWidth:2,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return'$'+c.raw.toLocaleString();}}}},scales:{y:{ticks:{font:{size:10},callback:function(v){return'$'+Math.round(v/1000)+'K';}},grid:{color:'rgba(0,0,0,0.04)'}},x:{ticks:{font:{size:10}},grid:{display:false}}}}});
+}
+
+// ===== INIT =====
+renderRes();
+renderChips(DEMO_CHIPS);
+</script>
+</body>
+</html>
